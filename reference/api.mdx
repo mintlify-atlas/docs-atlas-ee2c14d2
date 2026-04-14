@@ -1,0 +1,124 @@
+---
+title: "Backend API Reference"
+description: "REST API endpoints exposed by the Edpuzzle Answers server: media proxy, YouTube captions, AI model listing, and streaming text generation."
+---
+
+This is the server-side API used by the bookmarklet frontend. It is only relevant if you are self-hosting the backend or building integrations on top of it. If you are using the public instance at `edpuzzle.hs.vc`, these endpoints are already available without any additional setup.
+
+## GET /api/media/\{media_id\}
+
+Proxies Edpuzzle media data for a given assignment, including questions and answer choices with `isCorrect` flags. The server authenticates with Edpuzzle using teacher credentials configured at startup and handles token refresh automatically.
+
+**Path parameters**
+
+| Parameter  | Type   | Description               |
+| ---------- | ------ | ------------------------- |
+| `media_id` | string | The Edpuzzle media ID     |
+
+**Rate limiting**
+
+This endpoint is rate limited. The default is 60 requests per minute per IP (configurable via `rate_limits` in `config.json`).
+
+**Response**
+
+Returns a JSON object containing the media data from Edpuzzle, including a `questions` array. Each question includes an `answers` array where correct answers are flagged with `"isCorrect": true`.
+
+**Errors**
+
+| Status | Meaning                                                                                 |
+| ------ | --------------------------------------------------------------------------------------- |
+| 403    | The assignment is private; it is not possible to fetch answers for private assignments  |
+| 429    | Rate limit exceeded                                                                     |
+| 502    | Edpuzzle returned an unexpected error                                                   |
+
+<Warning>
+  A 403 response means the assignment has been set to private by the teacher. There is no workaround — answer data is not accessible for private assignments.
+</Warning>
+
+---
+
+## GET /api/captions/\{id\}
+
+Fetches English captions for a YouTube video. The bookmarklet uses these captions to construct prompts for AI-generated answers to open-ended questions.
+
+**Path parameters**
+
+| Parameter | Type   | Description              |
+| --------- | ------ | ------------------------ |
+| `id`      | string | The YouTube video ID     |
+
+**Rate limiting**
+
+Rate limited (default 60 requests per minute per IP).
+
+**Response**
+
+Returns a JSON object with a `captions` array. Each item in the array has the following fields:
+
+| Field       | Type    | Description                                  |
+| ----------- | ------- | -------------------------------------------- |
+| `timestamp` | number  | Start time of the caption segment in seconds |
+| `duration`  | number  | Duration of the caption segment in seconds   |
+| `text`      | string  | Caption text for this segment                |
+
+<Note>
+  This endpoint is only applicable for Edpuzzle assignments that use YouTube-hosted videos. Edpuzzles with directly uploaded video files do not have captions available through this endpoint.
+</Note>
+
+---
+
+## GET /api/models
+
+Returns the list of AI models available for open-ended answer generation. Model availability depends on which providers are enabled in the server configuration.
+
+**Parameters**
+
+None.
+
+**Response**
+
+Returns a JSON object with a `models` key. The value is an object mapping human-readable model names to model identifiers used in `/api/generate` requests.
+
+```json
+{
+  "models": {
+    "gemma-3-27b-it": "gemma-3-27b-it"
+  }
+}
+```
+
+---
+
+## POST /api/generate
+
+Streams an AI-generated response for an open-ended question. The response is returned as newline-delimited JSON, suitable for consuming as a server-sent event stream.
+
+**Rate limiting**
+
+Rate limited (configurable via `rate_limits.generate` in `config.json`).
+
+**Request body**
+
+| Field    | Type   | Required | Description                                                  |
+| -------- | ------ | -------- | ------------------------------------------------------------ |
+| `prompt` | string | Yes      | The prompt to send to the AI model. Max length is enforced by the server. |
+| `model`  | string | Yes      | A model identifier returned by `GET /api/models`             |
+
+**Response**
+
+Content type: `text/event-stream`. Each line in the response is a JSON object. Events are distinguished by the `status` field:
+
+| Event shape                                                              | Meaning                              |
+| ------------------------------------------------------------------------ | ------------------------------------ |
+| `{"status": "generating"}`                                               | Model has started generating         |
+| `{"text": "chunk"}`                                                      | A text chunk from the model output   |
+| `{"status": "done"}`                                                     | Generation complete                  |
+| `{"status": "error", "error": "...", "message": "...", "status_code": N}` | An error occurred during generation  |
+
+**Example**
+
+```bash
+curl -X POST https://edpuzzle.hs.vc/api/generate \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Answer in two sentences: What is photosynthesis?", "model": "gemma-3-27b-it"}'
+```

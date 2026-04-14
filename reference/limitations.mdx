@@ -1,0 +1,32 @@
+---
+title: "Known Limitations of Edpuzzle Answers"
+description: "What the Edpuzzle Answers bookmarklet cannot do: private assignments, third-party embeds, and open-ended questions without a server."
+---
+
+The Edpuzzle Answers bookmarklet covers the most common use cases, but there are several scenarios where it will not work or will have reduced functionality. Understanding these limitations ahead of time will help you avoid confusion and set correct expectations.
+
+<AccordionGroup>
+  <Accordion title="Private assignments cannot be answered">
+    If the teacher has configured the assignment as private, the media endpoint returns a 403 status code and no answer data is accessible. The script will display an error message. There is no workaround for this — private assignment data is not reachable through the Edpuzzle API regardless of the tools used.
+  </Accordion>
+
+  <Accordion title="Most third-party embeds are not supported">
+    The bookmarklet only works on direct `edpuzzle.com` URLs, and on assignments embedded in Canvas or Schoology. Other LMS platforms and custom embed setups are not supported. If your institution uses a different platform, you will need to open the Edpuzzle assignment directly in a separate tab for the bookmarklet to function.
+  </Accordion>
+
+  <Accordion title="Open-ended AI requires a server">
+    AI-generated answers for open-ended questions depend on the backend server. Without a self-hosted instance, or if the public instance at `edpuzzle.hs.vc` is unavailable or unreachable on your network, the open-ended answer generation feature will not work. Multiple-choice answer fetching does not require the server.
+  </Accordion>
+
+  <Accordion title="CSP bypass extension required">
+    Edpuzzle's Content Security Policy (CSP) prevents the bookmarklet script from loading external resources. To work around this, you must install a browser extension that disables the CSP for `edpuzzle.com`. This is a browser security enforcement, not a bug in the bookmarklet. Extensions are available for Chromium-based browsers (Chrome, Edge, Opera, Brave) and Firefox.
+  </Accordion>
+
+  <Accordion title="Rate limits on the public server">
+    The public instance at `edpuzzle.hs.vc` enforces rate limits on all API endpoints (default: 60 requests per minute per IP). If you share a network with other users of the tool, you may hit these limits. Self-hosting the server removes the shared rate limit constraints, and rate limits are fully configurable through `config.json`.
+  </Accordion>
+
+  <Accordion title="No support for video questions">
+    Only multiple-choice and open-ended text questions are handled. Edpuzzle video-response questions — where students are expected to record and submit a video — are not supported and will be ignored by the script.
+  </Accordion>
+</AccordionGroup>

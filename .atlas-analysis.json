@@ -1,0 +1,74 @@
+{
+  "projectType": "general",
+  "projectName": "Edpuzzle Answers",
+  "projectDescription": "A JavaScript bookmarklet that fetches answers for Edpuzzle assignments, skips videos, changes playback speed, and automatically submits multiple-choice and AI-generated open-ended answers.",
+  "theme": "almond",
+  "primaryColor": "#4F46E5",
+  "lightColor": "#818CF8",
+  "darkColor": "#3730A3",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guide",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "usage"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/answers",
+              "features/video-skipper",
+              "features/video-options",
+              "features/open-ended-ai"
+            ]
+          },
+          {
+            "group": "Platform Support",
+            "pages": [
+              "platforms/edpuzzle",
+              "platforms/canvas-schoology"
+            ]
+          },
+          {
+            "group": "Self-Hosting",
+            "pages": [
+              "self-hosting/setup",
+              "self-hosting/configuration"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/api",
+              "reference/limitations",
+              "reference/faq",
+              "reference/license"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Fetch and display multiple-choice answers for any Edpuzzle assignment",
+    "Automatically submit correct answers for multiple-choice questions",
+    "AI-generated responses for open-ended questions using Google Gemini",
+    "Video skipper for arbitrary navigation through assignments",
+    "Playback speed control (supports Edpuzzle, YouTube, and Vimeo videos)",
+    "Prevent auto-pausing when the browser tab loses focus",
+    "Works on Edpuzzle, Canvas, and Schoology embeds",
+    "No login or browser extension required (beyond CSP bypass)"
+  ],
+  "publicApiSurface": [
+    "GET /api/media/<media_id> — Proxy Edpuzzle media data including questions and answers",
+    "GET /api/captions/<id> — Fetch YouTube captions for AI prompt context",
+    "GET /api/models — List available AI models for open-ended generation",
+    "POST /api/generate — Stream AI-generated responses for open-ended questions"
+  ]
+}

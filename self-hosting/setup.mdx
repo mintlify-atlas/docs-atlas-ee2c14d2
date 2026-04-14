@@ -1,0 +1,84 @@
+---
+title: "Self-Host the Edpuzzle Answers Server"
+description: "How to clone, configure, and run the Edpuzzle Answers Flask backend on Linux to enable AI open-ended question answering with your own API keys."
+---
+
+Self-hosting is optional. The public instance at [edpuzzle.hs.vc](https://edpuzzle.hs.vc) works for most users. Run your own server if you want to use your own AI API keys, avoid shared rate limits, or keep full control over the backend.
+
+## Prerequisites
+
+Before you begin, make sure you have the following:
+
+- **Linux** — Windows may work but is unsupported
+- **Python 3.x**
+- **Node.js**
+- **A domain with HTTPS** — recommended approach: Nginx as a reverse proxy with Certbot for SSL certificates
+- **Edpuzzle teacher account credentials** — required to proxy assignment media
+- **Google Gemini API key** — required for AI open-ended question answering
+
+## Setup
+
+<Steps>
+  <Step title="Clone the repository">
+    ```bash
+    git clone https://github.com/ading2210/edpuzzle-answers.git && cd edpuzzle-answers
+    ```
+  </Step>
+
+  <Step title="Create and activate a Python virtual environment">
+    ```bash
+    python3 -m venv .venv
+    source .venv/bin/activate
+    ```
+  </Step>
+
+  <Step title="Install Python dependencies">
+    ```bash
+    pip3 install --upgrade -r requirements.txt
+    ```
+  </Step>
+
+  <Step title="Install Node.js dependencies">
+    ```bash
+    npm i
+    ```
+  </Step>
+
+  <Step title="Build the frontend JavaScript">
+    ```bash
+    npm run build
+    ```
+
+    For a minified production build, use `npm run build:prod` instead.
+
+    <Tip>
+      Use `npm run dev` during development — it watches for file changes and rebuilds automatically.
+    </Tip>
+  </Step>
+
+  <Step title="Copy the default config">
+    ```bash
+    cp server/config/default.json server/config/config.json
+    ```
+  </Step>
+
+  <Step title="Edit your config file">
+    Open `server/config/config.json` and fill in your Edpuzzle teacher credentials, Gemini API key, and any other settings you want to change. See the [Configuration reference](/self-hosting/configuration) for a full description of every option.
+  </Step>
+
+  <Step title="Run the server">
+    ```bash
+    python3 server/main.py
+    ```
+
+    The server starts on port `5000` by default. You can change this with the `server_port` config option.
+  </Step>
+</Steps>
+
+## HTTPS and reverse proxy
+
+<Note>
+  Your server must be reachable over HTTPS for the bookmarklet to function correctly. The recommended approach is to use Nginx as a reverse proxy in front of the Flask server and Certbot to obtain and renew SSL certificates automatically.
+</Note>
+
+When running behind Nginx or another reverse proxy, set `behind_proxy` to `true` in your `server/config/config.json`. This enables Werkzeug's `ProxyFix` middleware so Flask reads the real client IP address from the `X-Forwarded-For` header, which is required for accurate per-IP rate limiting. See the [Configuration reference](/self-hosting/configuration) for details.

@@ -1,0 +1,34 @@
+---
+title: "Video Skipper: Mark Videos as Watched"
+description: "How the Edpuzzle Answers video skipper works, what it does to the assignment, and how to use it alongside automatic answer submission."
+---
+
+The video skipper marks an Edpuzzle assignment video as fully watched without you having to sit through it. It sends a single POST request to Edpuzzle's watch endpoint, which records the full watch duration on the server side.
+
+## How it works
+
+Clicking **Skip Video** calls `post_watchtime`, which POSTs to the appropriate watch endpoint with the payload `{"timeIntervalNumber": 10}`. The `timeIntervalNumber` value tells Edpuzzle that the tenth (final) time interval has been watched, which causes the platform to treat the video as complete.
+
+The endpoint used depends on the assignment mode detected at load time:
+
+| Mode | Watch endpoint |
+|---|---|
+| Legacy | `https://edpuzzle.com/api/v4/media_attempts/{id}/watch` |
+| New | `https://edpuzzle.com/api/v3/learning/time_intervals/submission/{id}/watch` |
+
+The attempt ID (`{id}`) is retrieved from the learner's current attempt object before the request is sent.
+
+After a successful skip, the Edpuzzle tab reloads so the updated watch status is reflected in the assignment view.
+
+## Using the skipper with auto-answers
+
+The **Answer Questions** button runs the video skipper automatically before submitting multiple-choice answers. The sequence is:
+
+1. Fetch the current attempt.
+2. Skip the video (calls `post_watchtime` with `update_button=false` so the button state is not changed mid-flow).
+3. Submit all multiple-choice answers.
+4. Reload the Edpuzzle tab.
+
+<Tip>
+  You can skip the video independently of auto-answering by clicking just the **Skip Video** button. This is useful if you want to mark the video as watched without submitting any answers yet.
+</Tip>

@@ -1,0 +1,108 @@
+---
+title: "Server Configuration Reference"
+description: "All configuration options for the Edpuzzle Answers Flask server: port, rate limits, Gemini AI settings, teacher credentials, and proxy setup."
+---
+
+Configuration lives in `server/config/config.json`. This file is not included in the repository — you create it by copying the default template:
+
+```bash
+cp server/config/default.json server/config/config.json
+```
+
+Then edit `server/config/config.json` with your own values before starting the server.
+
+## Default configuration
+
+```json server/config/config.json
+{
+  "dev_mode": false,
+  "include_traceback": false,
+  "behind_proxy": true,
+  "gzip_responses": true,
+  "server_port": 5000,
+  "limiter_storage_uri": "memory://",
+  "script.js": "http://localhost:5000/script.js",
+  "teacher_creds": [
+    {
+      "username": "EDPUZZLE_EMAIL",
+      "password": "EDPUZZLE_PASSWORD"
+    }
+  ],
+  "gemini": {
+    "key": "GEMINI_KEY",
+    "model": "gemma-3-27b-it"
+  },
+  "rate_limit": {
+    "captions": "60/minute",
+    "generate": "60/minute",
+    "media": "60/minute"
+  }
+}
+```
+
+<Warning>
+  Never commit `config.json` to version control. It contains your Edpuzzle password and Gemini API key.
+</Warning>
+
+## Options
+
+<ParamField path="dev_mode" type="boolean" default="false">
+  Puts Flask in debug mode. The server restarts automatically whenever a source file is modified. Disable in production.
+</ParamField>
+
+<ParamField path="include_traceback" type="boolean" default="false">
+  Includes Python stack traces in error responses. This exposes the server's file paths to clients. Disable in production.
+</ParamField>
+
+<ParamField path="behind_proxy" type="boolean" default="true">
+  Enables Werkzeug's `ProxyFix` middleware so Flask reads the real client IP address from the `X-Forwarded-For` header. Required for accurate per-IP rate limiting when the server runs behind Nginx or another reverse proxy.
+</ParamField>
+
+<ParamField path="gzip_responses" type="boolean" default="true">
+  Compresses HTTP responses using gzip at compression level 9. Reduces bandwidth usage at the cost of slightly more CPU.
+</ParamField>
+
+<ParamField path="server_port" type="integer" default="5000">
+  The port Flask listens on.
+</ParamField>
+
+<ParamField path="limiter_storage_uri" type="string" default="memory://">
+  Storage backend for the rate limiter. Use `"memory://"` for in-process storage (no external dependencies, but limits reset on restart). You can also provide a Redis or Memcached URI for persistent storage across restarts. See the [Flask-Limiter documentation](https://flask-limiter.readthedocs.io/en/stable/#configuring-a-storage-backend) for supported URIs.
+</ParamField>
+
+<ParamField path="script.js" type="string" default="http://localhost:5000/script.js">
+  URL of the bookmarklet script served to the client. Update this to your public domain after setting up HTTPS (e.g., `"https://example.com/script.js"`).
+</ParamField>
+
+<ParamField path="teacher_creds" type="array" required>
+  List of Edpuzzle teacher account credentials used to proxy assignment media. Each entry is an object with two fields:
+
+  - `username` — the account email address
+  - `password` — the account password
+
+  At least one entry is required. Multiple accounts can be provided; one is chosen at random per request.
+</ParamField>
+
+<ParamField path="gemini.key" type="string" required>
+  Your Google Gemini API key. Required for AI open-ended question answering. Gemini has a limited free tier.
+</ParamField>
+
+<ParamField path="gemini.model" type="string" default="gemma-3-27b-it">
+  The Gemini model to use for generating answers.
+</ParamField>
+
+<ParamField path="rate_limit.captions" type="string" default="60/minute">
+  Rate limit applied to the `/api/captions` endpoint.
+</ParamField>
+
+<ParamField path="rate_limit.generate" type="string" default="60/minute">
+  Rate limit applied to the `/api/generate` endpoint.
+</ParamField>
+
+<ParamField path="rate_limit.media" type="string" default="60/minute">
+  Rate limit applied to the `/api/media` endpoint.
+</ParamField>
+
+<Note>
+  Rate limit values follow Flask-Limiter's string notation: `"N/period"` where period is `second`, `minute`, `hour`, or `day`. Examples: `"60/minute"`, `"1000/hour"`, `"10/second"`. See the [Flask-Limiter rate limit string documentation](https://flask-limiter.readthedocs.io/en/stable/configuration.html#rate-limit-string-notation) for the full format.
+</Note>

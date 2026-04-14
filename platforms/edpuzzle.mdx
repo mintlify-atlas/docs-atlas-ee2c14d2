@@ -1,0 +1,72 @@
+---
+title: "Using the Bookmarklet on Edpuzzle.com"
+description: "Step-by-step instructions to run the Edpuzzle Answers bookmarklet on a standard edpuzzle.com assignment, including URL format requirements."
+---
+
+The Edpuzzle Answers bookmarklet works directly on edpuzzle.com assignments. Before you start, make sure you have installed the bookmarklet and the CSP bypass browser extension. Once those are in place, fetching answers takes only a few seconds.
+
+<Steps>
+  <Step title="Navigate to an Edpuzzle assignment">
+    Open any Edpuzzle assignment. The URL must match one of these formats:
+
+    - Legacy assignments: `https://edpuzzle.com/assignments/{id}/watch`
+    - Newer assignments: `https://edpuzzle.com/assignments/{ASSIGNMENT_ID}/watch?attachmentId={ATTACHMENT_ID}`
+  </Step>
+  <Step title="Click the bookmarklet">
+    Click the bookmarklet in your bookmarks bar to run the script.
+  </Step>
+  <Step title="Allow popups if needed">
+    If nothing happens, your browser may be blocking the popup. Allow popups from `edpuzzle.com` in your browser settings, then click the bookmarklet again.
+  </Step>
+  <Step title="View the answers">
+    The answer popup opens in a new window, displaying answers for all multiple-choice questions in the assignment.
+  </Step>
+</Steps>
+
+<Warning>
+  The CSP bypass extension must be active on edpuzzle.com for the script to load. Install it from the [installation page](/installation).
+</Warning>
+
+## Assignment modes
+
+The script supports two assignment formats and detects them automatically based on the URL.
+
+**Legacy mode**
+
+The URL is `https://edpuzzle.com/assignments/{id}/watch`. The script fetches assignment data from:
+
+```
+/api/v3/assignments/{id}
+```
+
+**New mode**
+
+The URL includes a `?attachmentId=` query parameter, for example:
+
+```
+https://edpuzzle.com/assignments/{ASSIGNMENT_ID}/watch?attachmentId={ATTACHMENT_ID}
+```
+
+The script fetches data from:
+
+```
+/api/v3/learning/assignments/{id}/users/{userId}
+```
+
+<Note>
+  Both assignment modes are handled automatically. You do not need to do anything differently.
+</Note>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The popup didn't open">
+    Your browser is blocking the popup window. Go to your browser settings and allow popups from `edpuzzle.com`, then click the bookmarklet again.
+  </Accordion>
+  <Accordion title="I see 'Could not connect to any of the mirrors'">
+    The CDN mirrors used to load the script may be blocked on your network (for example, by a school firewall). Try using a different network or a VPN.
+  </Accordion>
+  <Accordion title="Some questions show no answer">
+    The assignment may be private or teacher-restricted. Private assignments do not expose answer data through the API, so the script cannot retrieve them.
+  </Accordion>
+</AccordionGroup>

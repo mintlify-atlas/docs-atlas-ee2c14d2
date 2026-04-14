@@ -1,0 +1,59 @@
+---
+title: "AI-Generated Open-Ended Question Answers"
+description: "How the Edpuzzle Answers script uses Google Gemini and YouTube captions to generate and submit responses to open-ended questions on Edpuzzle."
+---
+
+Open-ended questions cannot be answered automatically from the API because there is no stored correct answer — instead, the script provides an AI generation menu that uses Google Gemini to draft a response. Generation is triggered manually per question and requires a configured backend server.
+
+## Generating a response
+
+To generate an answer for an open-ended question:
+
+1. Click **Generate** next to the question in the popup. The AI menu opens, displaying the question text and a pre-filled prompt.
+2. Optionally edit the prompt in the text area before generating.
+3. Select an AI model from the dropdown. Available models are fetched from `/api/models` on the backend server.
+4. Click **Generate** in the menu. The response streams in real-time as it is produced.
+5. Once you are satisfied with the generated answer, click **Save** to copy it into the question's submission box.
+6. Click **Submit** to send the answer to Edpuzzle.
+
+## How the prompt is built
+
+When the menu opens, the script fetches YouTube captions (if available) and trims them to the timestamp of the question — only captions up to the point where the question appears are included. The captions are then inserted into the prompt template.
+
+**With captions:**
+
+```
+{captions}
+Based on the captions above, answer the following question in two sentences or less, at the writing level of a high school student:
+{question}
+```
+
+**Without captions:**
+
+```
+Answer the following question in two sentences or less, at the writing level of a high school student:
+{question}
+```
+
+You can freely edit the prompt before clicking **Generate**. If you modify the prompt text area, your edited version is used instead of the auto-generated template.
+
+<Note>
+  Captions are only available for YouTube-sourced videos. Edpuzzle-hosted and Vimeo videos do not expose caption data through the API, so the prompt falls back to the no-captions template for those sources.
+</Note>
+
+## How generation works
+
+After the prompt is finalized, the script POSTs to `/api/generate` on the backend server with the prompt text and the selected model identifier. The response streams line-by-line via `XMLHttpRequest`, and each line is parsed as a JSON event object. The generated text is appended to the output text area as chunks arrive.
+
+Generation goes through two states:
+
+| Status | Behavior |
+|---|---|
+| `generating` | Text area is cleared and chunks are appended as they arrive |
+| `done` | Text area is re-enabled and trailing whitespace is trimmed |
+
+If the request fails, an error state is shown in the text area with the error message, status code, and traceback (if available from the server).
+
+<Warning>
+  AI-generated answers require a self-hosted backend server with the Gemini API configured. The public instance at `edpuzzle.hs.vc` has rate limits that may prevent generation during peak usage. See the server setup documentation for instructions on running your own backend.
+</Warning>

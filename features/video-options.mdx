@@ -1,0 +1,52 @@
+---
+title: "Video Speed and Unfocus Controls"
+description: "Change Edpuzzle video playback speed beyond normal limits and prevent auto-pausing when switching tabs, with support for YouTube and Vimeo."
+---
+
+The popup provides two video controls: a speed selector that bypasses Edpuzzle's built-in playback rate limits, and an unfocus prevention toggle that stops the video from pausing when you switch browser tabs.
+
+## Speed control
+
+The speed dropdown includes a set of preset values and a **Custom** option. Selecting **Custom** reveals a slider for fine-grained control. The available range and step size depend on the video source:
+
+| Video source | Range | Step |
+|---|---|---|
+| Edpuzzle native | 0.1x – 9.9x | 0.1 |
+| YouTube embed | 0.25x – 2x | 0.05 |
+| Vimeo embed | 0.25x – 2x | 0.05 |
+
+Speed settings persist within the same session. If you close and reopen the popup without refreshing the Edpuzzle tab, the previously selected speed is restored.
+
+### How speed is forced per video source
+
+Each video source requires a different method to override the playback rate, because Edpuzzle's page restricts rate changes through different mechanisms.
+
+**Edpuzzle native videos**
+
+Edpuzzle overrides the `playbackRate` setter on the video element to block rate changes. The script bypasses this by calling the original setter directly from `HTMLMediaElement.prototype`:
+
+```javascript
+// Edpuzzle native video — override the playbackRate property
+let video = opener.document.querySelector("video");
+Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, "playbackRate").set.call(video, speed);
+```
+
+After setting the rate, the script redefines the property on the specific video element so Edpuzzle's internal code cannot reset it.
+
+**YouTube embeds**
+
+The script locates the YouTube player instance via `opener.YT.get(iframe.id)`, then finds and replaces the `onPlaybackRateChange` event listener with a no-op function. This prevents the YouTube player from reverting the rate change, after which `player.setPlaybackRate(speed)` is called.
+
+**Vimeo embeds**
+
+The Vimeo Player API is used directly. The script creates a `Vimeo.Player` instance from the embed iframe, removes any existing `playbackratechange` listeners with `player.off("playbackratechange")`, then calls `player.setPlaybackRate(speed)`.
+
+<Note>
+  Speed settings persist within the same session. If the Edpuzzle tab is reloaded, the speed may reset to the default. Reopen the popup and reapply your preferred speed after a reload.
+</Note>
+
+## Unfocus prevention
+
+The **Prevent unfocus** checkbox intercepts the `visibilitychange` event on the Edpuzzle tab. When enabled, the event handler calls `event.stopImmediatePropagation()` before Edpuzzle's own listener can fire, which prevents the video from pausing when you switch to a different tab or window.
+
+The interception script is injected once into the Edpuzzle page as a `<script>` element and then controlled via a flag (`document.visability_change`) toggled by the checkbox.

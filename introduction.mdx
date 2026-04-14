@@ -1,0 +1,68 @@
+---
+title: "Edpuzzle Answers: Skip Videos & Get Answers Instantly"
+description: "A JavaScript bookmarklet that fetches Edpuzzle answers, skips videos, controls playback speed, and uses AI to generate responses for open-ended questions."
+---
+
+Edpuzzle Answers is a browser bookmarklet that gives you a set of powerful tools for any Edpuzzle assignment — no login, no browser extension installation, and no account required. Run it once on an assignment page and a popup appears with answers, controls to skip the video, and options to auto-submit everything automatically.
+
+<CardGroup cols={2}>
+  <Card title="Install the bookmarklet" icon="bookmark" href="/installation">
+    Get the bookmarklet into your browser in under two minutes using drag-and-drop or manual setup.
+  </Card>
+  <Card title="Using the script" icon="play" href="/usage">
+    Learn how to run the bookmarklet on an assignment and use every feature in the popup.
+  </Card>
+  <Card title="Features overview" icon="stars" href="/features/answers">
+    Explore answer fetching, video skipping, speed control, and AI-powered open-ended responses.
+  </Card>
+  <Card title="Self-host the server" icon="server" href="/self-hosting/setup">
+    Run your own backend to enable AI open-ended answering and avoid shared rate limits.
+  </Card>
+</CardGroup>
+
+## What it does
+
+When you click the bookmarklet on an Edpuzzle assignment, it opens a popup that:
+
+- **Shows all answers** — Multiple-choice answers are highlighted for every question in the assignment
+- **Auto-submits answers** — Clicks through and submits every correct answer automatically
+- **Skips the video** — Marks the video as fully watched without you having to sit through it
+- **Controls playback speed** — Forces the video to play at any speed (works on Edpuzzle, YouTube, and Vimeo embeds)
+- **Answers open-ended questions** — Uses AI (Google Gemini) to generate and submit free-response answers
+- **Prevents auto-pause** — Keeps the video playing even when you switch to another browser tab
+
+<CardGroup cols={2}>
+  <Card title="Canvas & Schoology support" icon="school" href="/platforms/canvas-schoology">
+    The bookmarklet also works on Edpuzzle assignments embedded inside Canvas and Schoology.
+  </Card>
+  <Card title="API reference" icon="code" href="/reference/api">
+    If you self-host, explore the backend API endpoints for media proxy, captions, and AI generation.
+  </Card>
+  <Card title="Limitations" icon="triangle-exclamation" href="/reference/limitations">
+    Understand what the script can and cannot do before relying on it.
+  </Card>
+  <Card title="FAQ" icon="circle-question" href="/reference/faq">
+    Answers to the most common questions about setup and troubleshooting.
+  </Card>
+</CardGroup>
+
+## Quick setup
+
+<Steps>
+  <Step title="Go to the landing page">
+    Navigate to [edpuzzle.hs.vc](https://edpuzzle.hs.vc) in your browser.
+  </Step>
+  <Step title="Add the bookmarklet">
+    Drag the button on that page into your bookmarks bar (Chrome/Edge/Brave/Opera), or right-click it and choose **Bookmark link** (Firefox).
+  </Step>
+  <Step title="Install a CSP bypass extension">
+    Due to Edpuzzle's Content Security Policy, you need a browser extension to allow the script to run. Install the appropriate one for your browser — see [Installation](/installation) for links.
+  </Step>
+  <Step title="Run it on an assignment">
+    Navigate to any Edpuzzle assignment and click your new bookmark. The answer popup will open automatically.
+  </Step>
+</Steps>
+
+<Note>
+  The bookmarklet works on public Edpuzzle assignments only. Private assignments where the teacher has restricted access cannot be answered — the underlying data is not available without teacher credentials.
+</Note>

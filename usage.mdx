@@ -1,0 +1,101 @@
+---
+title: "Using the Edpuzzle Answers Bookmarklet"
+description: "Step-by-step guide to running the Edpuzzle Answers bookmarklet on an assignment, navigating the popup, and using all available tools."
+---
+
+Once the bookmarklet is installed and the CSP bypass extension is active, you can run it on any supported Edpuzzle assignment. The process differs slightly depending on whether you are accessing Edpuzzle directly or through a learning management system like Canvas or Schoology.
+
+<Warning>
+  The bookmarklet opens a popup window. If nothing happens when you click it, check that your browser allows popups from **edpuzzle.com**. Look for a blocked popup notification in your browser's address bar and choose **Always allow popups from this site**.
+</Warning>
+
+## Running the bookmarklet
+
+<Tabs>
+  <Tab title="Regular Edpuzzle">
+    <Steps>
+      <Step title="Navigate to the assignment">
+        Open the Edpuzzle assignment in your browser. The URL must follow this format:
+
+        ```
+        https://edpuzzle.com/assignments/{ASSIGNMENT_ID}/watch
+        ```
+      </Step>
+      <Step title="Click the bookmarklet">
+        Click the bookmarklet in your bookmarks bar. The script will load and the answer popup will open in a new window.
+      </Step>
+      <Step title="Allow popups if prompted">
+        If the popup is blocked, click the blocked popup indicator in the address bar, select **Always allow popups from edpuzzle.com**, and click the bookmarklet again.
+      </Step>
+    </Steps>
+
+    <Note>
+      Make sure the URL matches the format `https://edpuzzle.com/assignments/{ASSIGNMENT_ID}/watch` exactly. If you are on a different Edpuzzle URL, the script will not be able to identify the assignment.
+    </Note>
+  </Tab>
+  <Tab title="Canvas">
+    Edpuzzle assignments embedded in Canvas require an extra step because the bookmarklet must first extract the Edpuzzle assignment and open it in a separate tab.
+
+    <Steps>
+      <Step title="Navigate to the Canvas assignment">
+        Open the assignment in Canvas. The URL will look similar to:
+
+        ```
+        https://k12.instructure.com/courses/{id}/assignments/{id}
+        ```
+      </Step>
+      <Step title="Click the bookmarklet">
+        Click the bookmarklet. The script will detect the Canvas embed and open the Edpuzzle assignment in a new tab.
+      </Step>
+      <Step title="Re-run the bookmarklet">
+        Switch to the newly opened Edpuzzle tab and click the bookmarklet again to launch the full answer popup.
+      </Step>
+      <Step title="Allow popups if prompted">
+        If the popup does not open, make sure popups are allowed on both edpuzzle.com and your Canvas domain.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Schoology">
+    Schoology-embedded Edpuzzle assignments work the same way as Canvas.
+
+    <Steps>
+      <Step title="Navigate to the Schoology assignment">
+        Open the assignment page in Schoology.
+      </Step>
+      <Step title="Click the bookmarklet">
+        Click the bookmarklet. The script will detect the Schoology embed and open the Edpuzzle assignment in a new tab.
+      </Step>
+      <Step title="Re-run the bookmarklet">
+        Switch to the newly opened Edpuzzle tab and click the bookmarklet again to launch the full answer popup.
+      </Step>
+      <Step title="Allow popups if prompted">
+        If the popup is blocked, enable popups for both edpuzzle.com and your Schoology domain.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Popup features
+
+When the bookmarklet runs successfully, a popup window opens showing information about the assignment and a set of tools. Here is what each feature does:
+
+<CardGroup cols={2}>
+  <Card title="Answers" icon="list-check" href="/features/answers">
+    Fetches and displays the correct answer for every multiple-choice question in the assignment, sorted by timestamp. Correct choices are underlined.
+  </Card>
+  <Card title="Auto-Answer" icon="bolt" href="/features/answers">
+    Automatically clicks and submits the correct answer for every multiple-choice question, so you do not have to interact with the video manually.
+  </Card>
+  <Card title="Video skipper" icon="forward" href="/features/video-skipper">
+    Marks the entire video as watched and skips to the end, allowing you to complete the assignment without sitting through the video.
+  </Card>
+  <Card title="Speed control" icon="gauge" href="/features/video-options">
+    Forces the video to play at any speed you choose, including speeds above the native Edpuzzle limit. Works with YouTube and Vimeo embeds too.
+  </Card>
+  <Card title="Unfocus prevention" icon="eye" href="/features/video-options">
+    Prevents Edpuzzle from auto-pausing the video when you switch to a different browser tab or window.
+  </Card>
+  <Card title="Open-ended AI" icon="wand-magic-sparkles" href="/features/open-ended-ai">
+    Uses Google Gemini to generate and submit answers for free-response (open-ended) questions automatically.
+  </Card>
+</CardGroup>

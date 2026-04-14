@@ -1,0 +1,96 @@
+---
+title: "Install the Edpuzzle Answers Bookmarklet"
+description: "Two methods to add the Edpuzzle Answers bookmarklet to Chrome, Firefox, Edge, Brave, or Opera, plus the required CSP bypass extension."
+---
+
+The Edpuzzle Answers bookmarklet is a small snippet of JavaScript saved as a browser bookmark. When you click it on an Edpuzzle assignment page, it loads the full script and opens a popup with answers, video controls, and more. Installation involves two things: adding the bookmarklet to your browser, and installing a browser extension to bypass Edpuzzle's Content Security Policy.
+
+<Warning>
+  Due to recent changes by Edpuzzle, a CSP bypass extension is required for the script to run.
+
+  - **Chrome, Edge, Brave, Opera:** Install [Disable Content Security Policy](https://chromewebstore.google.com/detail/disable-content-security/ieelmcmcagommplceebfedjlakkhpden) from the Chrome Web Store.
+  - **Firefox:** Install [Disable CSP for a minute](https://addons.mozilla.org/en-US/firefox/addon/disable-csp-for-a-minute/) from Firefox Add-ons.
+</Warning>
+
+## Adding the bookmarklet
+
+<Tabs>
+  <Tab title="Method 1: Drag and drop">
+    This is the fastest way to install the bookmarklet.
+
+    <Steps>
+      <Step title="Navigate to the landing page">
+        Go to [edpuzzle.hs.vc](https://edpuzzle.hs.vc) in your browser.
+      </Step>
+      <Step title="Add the bookmarklet to your bookmarks bar">
+        - **Chrome, Edge, Brave, Opera:** Drag the button at the bottom of the page directly into your bookmarks bar.
+        - **Firefox:** Right-click the button and select **Bookmark link**.
+      </Step>
+    </Steps>
+
+    <Note>
+      If your bookmarks bar is not visible, press **Ctrl+Shift+B** (Windows/Linux) or **Cmd+Shift+B** (Mac) to show it.
+    </Note>
+  </Tab>
+  <Tab title="Method 2: Manual">
+    Use this method if drag-and-drop does not work on your browser.
+
+    <Steps>
+      <Step title="Copy the bookmarklet code">
+        Copy the following code to your clipboard:
+
+        ```javascript bookmarklet
+        javascript: fetch("https://cdn.jsdelivr.net/gh/ading2210/edpuzzle-answers@latest/script.js").then(r => r.text()).then(r => eval(r))
+        ```
+      </Step>
+      <Step title="Open the add bookmark dialog">
+        Right-click your bookmarks bar and select **Add page** (Chrome/Edge/Brave/Opera) or **Add Bookmark** (Firefox).
+      </Step>
+      <Step title="Set the bookmark name">
+        Enter any name you want, such as `Edpuzzle Answers`.
+      </Step>
+      <Step title="Paste the code as the URL">
+        Paste the copied code into the URL or address field, then save the bookmark.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+<Note>
+  A video tutorial walking through both installation methods is available at [youtube.com/watch?v=zxZzB2KXCkw](https://www.youtube.com/watch?v=zxZzB2KXCkw).
+</Note>
+
+## Installing the CSP bypass extension
+
+Edpuzzle's Content Security Policy blocks the bookmarklet from loading external scripts. You must install a browser extension to disable CSP on edpuzzle.com before the bookmarklet will work.
+
+<Tabs>
+  <Tab title="Chrome / Edge / Brave / Opera">
+    <Steps>
+      <Step title="Open the Chrome Web Store listing">
+        Go to the [Disable Content Security Policy](https://chromewebstore.google.com/detail/disable-content-security/ieelmcmcagommplceebfedjlakkhpden) extension page.
+      </Step>
+      <Step title="Install the extension">
+        Click **Add to Chrome** (or the equivalent button for your browser) and confirm the prompt.
+      </Step>
+      <Step title="Enable the extension on edpuzzle.com">
+        Navigate to any page on edpuzzle.com. Click the extension icon in your toolbar and make sure it is active.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Firefox">
+    <Steps>
+      <Step title="Open the Firefox Add-ons listing">
+        Go to the [Disable CSP for a minute](https://addons.mozilla.org/en-US/firefox/addon/disable-csp-for-a-minute/) add-on page.
+      </Step>
+      <Step title="Install the add-on">
+        Click **Add to Firefox** and confirm the permissions prompt.
+      </Step>
+      <Step title="Enable the add-on on edpuzzle.com">
+        Navigate to any page on edpuzzle.com. Click the add-on icon in your toolbar to activate it.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+Once the bookmarklet and the CSP bypass extension are both in place, follow the [usage guide](/usage) to run the bookmarklet on an assignment.

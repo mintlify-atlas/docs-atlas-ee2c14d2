@@ -1,0 +1,82 @@
+---
+title: "Fetching and Displaying Edpuzzle Answers"
+description: "How the Edpuzzle Answers bookmarklet retrieves multiple-choice answers and displays them in the popup, including how auto-answering works."
+---
+
+The bookmarklet fetches answers directly from the Edpuzzle API and displays them in the popup without requiring a login or browser extension beyond standard bookmarklet access. Multiple-choice answers are highlighted with an underline, and open-ended questions surface a separate AI menu for generating responses.
+
+## How answer fetching works
+
+When the popup loads, the script resolves the assignment ID from the current page URL and calls the Edpuzzle API to retrieve the full assignment and media objects. It then reads each question's `choices` array and checks the `isCorrect` flag on each entry to determine which options are correct.
+
+The fetch sequence is:
+
+1. Retrieve the assignment from `/api/v3/assignments/{id}` (legacy mode) or `/api/v3/learning/assignments/{id}/users/{userId}` (new mode).
+2. Fetch the media object, which contains the `questions` array, from the self-hosted proxy at `/api/media/{mediaId}`.
+3. Load the learner's existing attempt to associate any already-submitted responses with each question.
+
+Questions are sorted by their `time` property (the video timestamp at which they appear) before being rendered.
+
+## Supported question types
+
+| Type | How answers are shown |
+|---|---|
+| Multiple-choice | Correct choices are underlined in the popup |
+| Open-ended | A "Generate" button opens the AI menu — no answer is shown automatically |
+
+## Auto-answering
+
+Clicking **Answer Questions** triggers the auto-answer flow:
+
+1. The video is marked as fully watched (see [Video Skipper](/features/video-skipper)).
+2. `filter_questions` groups multiple-choice questions by timestamp — questions that appear at the same point in the video are submitted together in a single API call.
+3. Each group is POSTed to `/api/v3/attempts/{id}/answers` (legacy) or `/api/v3/learning/submissions/{id}/answers` (new).
+4. The Edpuzzle tab reloads once all answers are submitted.
+
+```javascript
+function filter_questions(questions) {
+  let filtered_questions = [];
+  for (let i=0; i<questions.length; i++) {
+    let question = questions[i];
+    if (question.type != "multiple-choice") continue;
+    // groups questions that appear at the same timestamp
+    if (filtered_questions.length == 0) {
+      filtered_questions.push([question]);
+    }
+    else if (filtered_questions[filtered_questions.length-1][0].time == question.time) {
+      filtered_questions[filtered_questions.length-1].push(question);
+    }
+    else {
+      filtered_questions.push([question]);
+    }
+  }
+  return filtered_questions;
+}
+```
+
+## Assignment modes
+
+Edpuzzle uses two different API shapes depending on how an assignment was created. The script detects the correct mode automatically:
+
+- **Legacy mode** — the assignment is fetched from `/api/v3/assignments/{id}`. Answers are posted to `/api/v3/attempts/{id}/answers`.
+- **New mode** — the legacy endpoint returns a non-200 status; the script falls back to `/api/v3/learning/assignments/{id}/users/{userId}`. Answers are posted to `/api/v3/learning/submissions/{id}/answers` with a different request body shape.
+
+You do not need to configure this manually.
+
+<Note>
+  Private assignments restrict answer data at the API level. If a teacher has set an assignment to private, the `isCorrect` field is not returned and the bookmarklet cannot extract answers.
+</Note>
+
+<Note>
+  Both the legacy and new API modes are handled automatically. The script tries the legacy endpoint first and falls back to the new endpoint if it receives a non-200 response.
+</Note>
+
+<AccordionGroup>
+  <Accordion title="What if some questions have no correct answer listed?">
+    Before rendering questions, the script validates that every multiple-choice question has at least one choice with `isCorrect: true`. If any question fails this check, a validation error is shown:
+
+    > "Some questions have invalid data. The assignment might be a private one, so the answers cannot be extracted."
+
+    This most commonly occurs with private assignments where the teacher has restricted access to the answer key. The popup will not display any answers and the **Answer Questions** button will remain disabled.
+  </Accordion>
+</AccordionGroup>

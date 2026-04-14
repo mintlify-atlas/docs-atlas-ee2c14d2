@@ -1,0 +1,58 @@
+---
+title: "Using the Bookmarklet on Canvas and Schoology"
+description: "How to run the Edpuzzle Answers bookmarklet on Edpuzzle assignments embedded inside Canvas LMS and Schoology with a two-step launch process."
+---
+
+When Edpuzzle is accessed through Canvas or Schoology, the bookmarklet works slightly differently than on edpuzzle.com directly. The script detects the embedded context and opens the Edpuzzle assignment in a new tab before running the full answer extraction.
+
+<Note>
+  The bookmarklet works differently when Edpuzzle is embedded in Canvas or Schoology — it requires two clicks to launch.
+</Note>
+
+<Tabs>
+  <Tab title="Canvas">
+    <Steps>
+      <Step title="Navigate to the Canvas assignment">
+        Open the Canvas assignment page that contains the Edpuzzle video. The URL looks like:
+
+        ```
+        https://k12.instructure.com/courses/{id}/assignments/{id}
+        ```
+      </Step>
+      <Step title="Click the bookmarklet (first click)">
+        Click the bookmarklet in your bookmarks bar. The script detects the Canvas embed and opens the Edpuzzle assignment in a new tab.
+      </Step>
+      <Step title="Allow popups if prompted">
+        If the new tab does not open, allow popups from `edpuzzle.com` in your browser settings, then try again.
+      </Step>
+      <Step title="Click the bookmarklet again (second click)">
+        In the new Edpuzzle tab, click the bookmarklet a second time. The answer popup will now open.
+      </Step>
+    </Steps>
+
+    <Tip>
+      Make sure popups are allowed on both Canvas and edpuzzle.com.
+    </Tip>
+  </Tab>
+  <Tab title="Schoology">
+    <Steps>
+      <Step title="Navigate to the Schoology assignment">
+        Open the Schoology assignment that contains the embedded Edpuzzle video.
+      </Step>
+      <Step title="Click the bookmarklet (first click)">
+        Click the bookmarklet. The script detects the Schoology embed and opens the Edpuzzle assignment in a new tab.
+      </Step>
+      <Step title="Click the bookmarklet again (second click)">
+        In the new Edpuzzle tab, click the bookmarklet a second time. The answer popup opens.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+<Note>
+  The first click detects whether the current page is a Canvas or Schoology embed and extracts the real Edpuzzle assignment URL. The second click runs the full script against that URL.
+</Note>
+
+<Warning>
+  Most other third-party embeds are not supported. The script only handles Canvas, Schoology, and direct edpuzzle.com URLs. If your school uses a different LMS or embed method, the bookmarklet will not work.
+</Warning>
